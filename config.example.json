@@ -1,0 +1,11 @@
+{
+    "location": {
+        "lat": 0.0,
+        "long": 0.0,
+        "range": 3
+    },
+    "discord": {
+        "token": "YOUR_TOKEN_TO_DISCORD_BOT",
+        "channel_id": "YOUR_DISCORD_CHANNEL_ID"
+    }
+}
