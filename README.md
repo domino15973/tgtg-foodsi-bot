@@ -45,6 +45,7 @@ cp config.example.json config.json
 ```
 6. Edit config.json file:
 * Insert your location info [latlong.net](https://www.latlong.net/)
+* Insert notification range (in kilometers)
 * Insert your [Discord bot token](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) and [channel id](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-)
 
 ## Running the application
