@@ -133,6 +133,18 @@ intents.presences = False
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 
+# Global flag to track if the channel has been cleared
+channel_cleared = False
+
+
+# Function to clear the channel
+async def clear_channel(channel):
+    global channel_cleared
+    if not channel_cleared:
+        await channel.purge(limit=None)  # Clear the channel
+        channel_cleared = True
+
+
 # Function to send a Discord message
 async def send_discord_message(message):
     channel = bot.get_channel(int(channel_id))
@@ -148,6 +160,7 @@ async def on_ready():
     print(f'Logged in as {bot.user.name}')
     print(f'Sending messages on a channel with an ID: {channel_id}')
     refresh.start()
+    await clear_channel(bot.get_channel(int(channel_id)))  # Clear the channel
 
 
 @bot.event
@@ -177,6 +190,7 @@ def parse_tgtg_api(api_result):
         if current_item['items_available'] == 0:
             result.append(current_item)
             continue
+        current_item['address'] = store['store']['store_location']['address']['address_line']
         current_item['description'] = store['item']['description']
         current_item['category_picture'] = store['item']['cover_picture']['current_url']
         current_item['price_including_taxes'] = str(store['item']['price_including_taxes']['minor_units'])[:-(store['item']['price_including_taxes']['decimals'])] + "." + str(store['item']['price_including_taxes']['minor_units'])[-(store['item']['price_including_taxes']['decimals']):]+store['item']['price_including_taxes']['code']
@@ -189,10 +203,9 @@ def parse_tgtg_api(api_result):
         except KeyError:
             current_item['pickup_start'] = None
             current_item['pickup_end'] = None
-        try:
-            current_item['rating'] = round(store['item']['average_overall_rating']['average_overall_rating'], 2)
-        except KeyError:
-            current_item['rating'] = None
+        except:  # sloppy TODO
+            current_item['pickup_start'] = dateutil.parser.parse(store['pickup_interval']['start']).strftime('%H:%M')
+            current_item['pickup_end'] = dateutil.parser.parse(store['pickup_interval']['end']).strftime('%H:%M')
         result.append(current_item)
     return result
 
@@ -230,6 +243,8 @@ async def toogoodtogo():
             if old_stock == 0 and new_stock > 0:
                 message = f".\n.\n.\n.\n.\n"
                 message += f"***TooGoodToGo - There are {new_stock} new goodie bags at [{item['store_name']}]***\n"
+                if item['address']:
+                    message += f"Address: {item['address']}\n"
                 if item['description']:
                     message += f"{item['description']}\n"
                 if item['price_including_taxes'] and item['value_including_taxes']:
@@ -341,6 +356,8 @@ async def foodsi():
             if old_stock == 0 and new_stock > 0:
                 message = f".\n.\n.\n.\n.\n"
                 message += f"***Foodsi - There are {new_stock} new goodie bags at [{item['name']}]***\n"
+                if item['address']:
+                    message += f"Address: {item['address']}\n"
                 if item['meal']['description']:
                     message += f"{item['meal']['description']}\n"
                 if item['meal']['original_price'] and item['meal']['price']:
