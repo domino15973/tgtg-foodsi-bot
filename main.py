@@ -163,12 +163,6 @@ async def on_ready():
     await clear_channel(bot.get_channel(int(channel_id)))  # Clear the channel
 
 
-@bot.event
-async def on_disconnect():
-    print('Bot disconnected')
-    refresh.cancel()  # Cancel the refresh task when the bot disconnects
-
-
 # Define a background task using the tasks extension
 @tasks.loop(seconds=15)  # Run every 15 seconds
 async def refresh():
