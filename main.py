@@ -376,7 +376,7 @@ async def foodsi():
                 pass
             else:
                 message = f".\n.\n.\n.\n.\n"
-                message += f"***Foodsi - There was a change of number of goodie bags in stock from {old_stock} to {new_stock} at [{item['store_name']}]***"
+                message += f"***Foodsi - There was a change of number of goodie bags in stock from {old_stock} to {new_stock} at [{item['name']}]***"
                 await send_discord_message(message)
 
     # Reset the global information with the newest fetch
